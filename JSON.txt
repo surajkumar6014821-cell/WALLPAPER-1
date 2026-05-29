@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "src": "images/mobile1.jpg",
+    "type": "mobile"
+  },
+  {
+    "id": 2,
+    "src": "images/desktop1.jpg",
+    "type": "desktop"
+  },
+  {
+    "id": 3,
+    "src": "images/mobile2.jpg",
+    "type": "mobile"
+  }
+]

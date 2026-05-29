@@ -1,0 +1,56 @@
+// Data load karne ka function
+async function loadWallpapers() {
+    try {
+        const response = await fetch('data.json');
+        const wallpapers = await response.json();
+        renderGallery(wallpapers);
+        setupFilters(wallpapers);
+    } catch (error) {
+        console.error("Error loading wallpapers:", error);
+    }
+}
+
+// Wallpapers ko screen par dikhana
+function renderGallery(wallpapers) {
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = ''; // Pehle purana data clear karo
+
+    wallpapers.forEach(wp => {
+        const card = document.createElement('div');
+        card.className = `card ${wp.type}`;
+        
+        card.innerHTML = `
+            <img src="${wp.src}" alt="${wp.type} wallpaper" loading="lazy">
+            <div class="overlay">
+                <span class="badge">${wp.type === 'mobile' ? '📱 Mobile' : '💻 Desktop'}</span>
+                <a href="${wp.src}" download class="download-btn"><i class="fa-solid fa-download"></i> Download</a>
+            </div>
+        `;
+        gallery.appendChild(card);
+    });
+}
+
+// Filter buttons ka logic
+function setupFilters(wallpapers) {
+    const buttons = document.querySelectorAll('.filter-btn');
+    
+    buttons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            // Active class hatana aur naye pe lagana
+            buttons.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+
+            const filter = e.target.getAttribute('data-filter');
+            
+            if (filter === 'all') {
+                renderGallery(wallpapers);
+            } else {
+                const filteredWallpapers = wallpapers.filter(wp => wp.type === filter);
+                renderGallery(filteredWallpapers);
+            }
+        });
+    });
+}
+
+// Website load hote hi function chalao
+loadWallpapers();
