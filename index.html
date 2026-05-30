@@ -3,26 +3,349 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Wallpapers</title>
+    <title>PixelVault - Premium World Wallpapers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        :root {
+            --bg-deep: #050509; /* Ultra dark blue/black */
+            --bg-card: rgba(255, 255, 255, 0.03); /* Soft glass effect */
+            --accent: #3b82f6; /* Modern Blue */
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --font-display: 'Playfair Display', serif;
+            --font-body: 'Montserrat', sans-serif;
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Glassmorphism Navbar (Super Premium Feel) */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.2rem 5%;
+            background: rgba(5, 5, 9, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo { font-size: 26px; font-weight: 700; color: var(--accent); letter-spacing: 1px; font-family: var(--font-display); }
+        .logo span { color: #fff; }
+
+        /* Modern Filter & Search Container */
+        .nav-controls { display: flex; align-items: center; gap: 20px; }
+
+        .search-box {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50px;
+            overflow: hidden;
+            width: 250px; transition: var(--transition);
+        }
+        .search-box:focus-within { width: 300px; border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+        .search-box input {
+            background: transparent; border: none; outline: none;
+            color: #fff; padding: 10px 20px 10px 45px; width: 100%; font-size: 14px;
+        }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px; }
+
+        .filters { display: flex; gap: 10px; }
+        .filter-btn {
+            background: transparent; color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 9px 18px; border-radius: 50px; cursor: pointer;
+            transition: var(--transition); font-weight: 500; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent); color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Pure Masonry Layout (Pinterest style) */
+        main { padding: 120px 5% 50px; }
+        .gallery {
+            columns: 4 320px; /* Advanced masonry column logic */
+            column-gap: 25px;
+            width: 100%;
+        }
+
+        /* Optimized Card Design & Animations */
+        .card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            break-inside: avoid; /* Prevents card splitting across columns */
+            transition: var(--transition);
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.01);
+            opacity: 0; animation: fadeIn 0.8s ease forwards; /* Smooth entrance */
+        }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .card img {
+            width: 100%; display: block; border-radius: 20px;
+            object-fit: cover;
+            transition: var(--transition); /* Immersive zoom setup */
+        }
+        .card:hover img { transform: scale(1.08); } /* Subtle zoom *within* card */
+
+        /* Premium Download Overlay with Glassmorphism */
+        .overlay {
+            position: absolute; bottom: -20px; left: 0; width: 100%;
+            padding: 30px 25px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            display: flex; justify-content: space-between; align-items: flex-end;
+            opacity: 0; transition: var(--transition);
+            z-index: 2;
+        }
+        .card:hover .overlay { opacity: 1; bottom: 0; }
+
+        .info-panel { display: flex; flex-direction: column; gap: 5px; }
+        .badge {
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(5px);
+            padding: 5px 12px; border-radius: 50px; font-size: 11px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #fff;
+            align-self: flex-start; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .download-action { display: flex; gap: 10px; }
+        .action-btn {
+            background: #fff; color: #000; text-decoration: none;
+            padding: 12px; border-radius: 50%; font-size: 16px;
+            transition: var(--transition); border: 1px solid rgba(255,255,255,0.1);
+        }
+        .action-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* Modal Preview/Lightbox (Crucial for World's Best Feeling) */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+        .modal.open { opacity: 1; visibility: visible; }
+        .modal-content { max-width: 90%; max-height: 85vh; border-radius: 20px; box-shadow: 0 0 50px rgba(0,0,0,1); border: 2px solid var(--accent); animation: modalZoom 0.5s ease; }
+        @keyframes modalZoom { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .close-modal { position: absolute; top: 30px; right: 30px; color: #fff; font-size: 30px; cursor: pointer; transition: var(--transition); }
+        .close-modal:hover { color: var(--accent); }
+        
+        .modal-download-btn {
+            position: absolute; bottom: 30px;
+            background: var(--accent); color: #fff; text-decoration: none;
+            padding: 15px 40px; border-radius: 50px; font-weight: 700;
+            font-size: 16px; transition: var(--transition);
+            box-shadow: 0 5px 20px var(--accent-glow);
+        }
+        .modal-download-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px var(--accent-glow); }
+
+        /* Custom Animated Loading Spinner */
+        #loading { display: none; text-align: center; font-size: 14px; color: var(--text-muted); padding: 20px; }
+        #loading i { animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Mobile Responsiveness (Pure Mobile First) */
+        @media (max-width: 1024px) {
+            .nav-controls { flex-direction: column-reverse; gap: 10px; align-items: flex-end; }
+            .search-box { width: 100%; }
+            .search-box:focus-within { width: 100%; }
+        }
+        @media (max-width: 768px) {
+            nav { padding: 1rem 3%; flex-direction: column; gap: 15px; }
+            .nav-controls { width: 100%; align-items: stretch; gap: 15px; }
+            .filters { justify-content: space-between; gap: 5px; }
+            .filter-btn { padding: 9px 12px; font-size: 11px; flex: 1; text-align: center; }
+            main { padding: 160px 3% 30px; }
+            .gallery { columns: 2 150px; column-gap: 15px; }
+            .card { border-radius: 12px; margin-bottom: 15px; }
+            .card img { border-radius: 12px; }
+            .badge { padding: 3px 8px; font-size: 9px; }
+            .action-btn { padding: 10px; font-size: 14px; }
+        }
+    </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo">Wallpaper<span>Pro</span></div>
-        <div class="filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="mobile">📱 Mobile</button>
-            <button class="filter-btn" data-filter="desktop">💻 Desktop</button>
+        <div class="logo">Pixel<span>Vault</span></div>
+        <div class="nav-controls">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Search elite wallpapers...">
+            </div>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="mobile">📱 Mobile</button>
+                <button class="filter-btn" data-filter="desktop">💻 Desktop</button>
+            </div>
         </div>
     </nav>
 
     <main>
         <div class="gallery" id="gallery">
             </div>
+        <div id="loading"><i class="fa-solid fa-spinner"></i> Finding more masterpieces...</div>
     </main>
 
-    <script src="script.js"></script>
+    <div class="modal" id="previewModal">
+        <i class="fa-solid fa-xmark close-modal" onclick="closeModal()"></i>
+        <img class="modal-content" id="modalImage" src="" alt="Premium Preview">
+        <a href="" download class="modal-download-btn" id="modalDownload"><i class="fa-solid fa-download"></i> Download Original</a>
+    </div>
+
+    <script>
+        // PREMIUM DATA PREVIEW (Ise aap update karte rahenge)
+        // Main demo ke liye high-quality dynamic Unsplash images use kar raha hoon
+        const wallpapersData = [
+            { id: 1, src: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1000", type: "mobile" },
+            { id: 2, src: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=2000", type: "desktop" },
+            { id: 3, src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000", type: "desktop" },
+            { id: 4, src: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000", type: "mobile" },
+            { id: 5, src: "https://images.unsplash.com/photo-1549497538-303791108f94?q=80&w=1000", type: "mobile" },
+            { id: 6, src: "https://images.unsplash.com/photo-1487147264018-f937fba0c817?q=80&w=2000", type: "desktop" },
+            { id: 7, src: "https://images.unsplash.com/photo-1554188248-986adbb73be4?q=80&w=1000", type: "mobile" },
+            { id: 8, src: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2000", type: "desktop" }
+        ];
+
+        // System optimized state
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        // Optimized Masonry Renderer
+        function renderGallery(data) {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = ''; 
+
+            if (data.length === 0) {
+                gallery.innerHTML = '<div style="text-align:center; padding:50px; color:var(--text-muted); grid-column: 1/-1;">No wallpapers found in the vault. Try another search.</div>';
+                return;
+            }
+
+            data.forEach(wp => {
+                const card = document.createElement('div');
+                card.className = `card`;
+                
+                // Pure Dynamic Markup
+                card.innerHTML = `
+                    <div class="card-inner" onclick="openModal('${wp.src}')">
+                        <img src="${wp.src}" alt="${wp.type} wallpaper" loading="lazy">
+                        <div class="overlay">
+                            <div class="info-panel">
+                                <span class="badge">${wp.type === 'mobile' ? '<i class="fa-solid fa-mobile-screen"></i> Mobile' : '<i class="fa-solid fa-desktop"></i> Desktop'}</span>
+                            </div>
+                            <div class="download-action">
+                                <a href="${wp.src}" target="_blank" class="action-btn" title="View Full" onclick="event.stopPropagation()"><i class="fa-solid fa-eye"></i></a>
+                                <a href="${wp.src}" download class="action-btn" title="Download" onclick="event.stopPropagation()"><i class="fa-solid fa-download"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                gallery.appendChild(card);
+            });
+        }
+
+        // Filtering & Search Master Logic
+        function applyControls() {
+            let filtered = wallpapersData;
+
+            // 1. Apply Filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(wp => wp.type === currentFilter);
+            }
+
+            // 2. Apply Search
+            if (searchQuery) {
+                filtered = filtered.filter(wp => wp.type.toLowerCase().includes(searchQuery.toLowerCase()));
+            }
+
+            renderGallery(filtered);
+        }
+
+        // Event Listeners for Filters
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                buttons.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.getAttribute('data-filter');
+                applyControls();
+            });
+        });
+
+        // Event Listener for Search (Real-time filtering)
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            applyControls();
+        });
+
+        // Modal Premium Preview Controls
+        function openModal(imgSrc) {
+            const modal = document.getElementById('previewModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalDownload = document.getElementById('modalDownload');
+            
+            modalImage.src = imgSrc;
+            modalDownload.href = imgSrc;
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden'; // Prevents background scroll
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('previewModal');
+            modal.classList.remove('open');
+            document.body.style.overflow = 'auto'; // Restores scroll
+        }
+
+        // Close modal if user clicks outside the image
+        document.getElementById('previewModal').addEventListener('click', (e) => {
+            if (e.target.id === 'previewModal') {
+                closeModal();
+            }
+        });
+
+        // Website start hote hi system load karo
+        renderGallery(wallpapersData);
+
+        // Infinite Scroll Demo (Just for visual experience in demo data)
+        window.addEventListener('scroll', () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+                const loading = document.getElementById('loading');
+                if (loading.style.display === 'none' || loading.style.display === '') {
+                    loading.style.display = 'block';
+                    setTimeout(() => {
+                        loading.style.display = 'none';
+                        // Demo data repeat karega agar users search nahi kar rhe hain
+                        if (!searchQuery && currentFilter === 'all') {
+                            renderGallery([...wallpapersData, ...wallpapersData]);
+                        }
+                    }, 2000); // 2 second ka fake loading
+                }
+            }
+        });
+    </script>
 </body>
 </html>
